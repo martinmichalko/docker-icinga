@@ -1,0 +1,10 @@
+---
+- name: install addtional system packages and pip packages
+  hosts: all:!localhost
+  vars:
+    #this is needed to prepare vm's for python3 also for ansible
+    ansible_python_interpreter: /usr/bin/python
+  roles:
+    - packages-req
+
+  environment: "{{proxy_env}}"

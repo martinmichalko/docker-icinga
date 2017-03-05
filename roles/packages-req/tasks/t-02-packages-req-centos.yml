@@ -1,0 +1,7 @@
+---
+#CENTOS
+- name: install additional packages with yum
+  yum:
+    name: "{{item}}"
+    state: present
+  with_items: "{{additional_packages}}"

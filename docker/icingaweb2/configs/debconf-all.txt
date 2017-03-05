@@ -1,0 +1,39 @@
+# MySQL application password for icinga2-ido-mysql:
+icinga2-ido-mysql       icinga2-ido-mysql/mysql/app-pass        password        uukOIYsMWO92
+icinga2-ido-mysql       icinga2-ido-mysql/password-confirm      password
+icinga2-ido-mysql       icinga2-ido-mysql/mysql/admin-pass      password        lol
+icinga2-ido-mysql       icinga2-ido-mysql/app-password-confirm  password        uukOIYsMWO92
+# Connection method for MySQL database of icinga2-ido-mysql:
+icinga2-ido-mysql       icinga2-ido-mysql/mysql/method  select  unix socket
+# Configure database for icinga2-ido-mysql with dbconfig-common?
+icinga2-ido-mysql       icinga2-ido-mysql/dbconfig-install      boolean false
+icinga2-ido-mysql       icinga2-ido-mysql/passwords-do-not-match        error
+icinga2-ido-mysql       icinga2-ido-mysql/install-error select  abort
+icinga2-ido-mysql       icinga2-ido-mysql/internal/skip-preseed boolean true
+icinga2-ido-mysql       icinga2-ido-mysql/internal/reconfiguring        boolean false
+icinga2-ido-mysql       icinga2-ido-mysql/enable        boolean false
+# Database type to be used by icinga2-ido-mysql:
+icinga2-ido-mysql       icinga2-ido-mysql/database-type select  mysql
+icinga2-ido-mysql       icinga2-ido-mysql/remove-error  select  abort
+# MySQL username for icinga2-ido-mysql:
+icinga2-ido-mysql       icinga2-ido-mysql/db/app-user   string  icinga2-ido-mysq
+# Host name of the MySQL database server for icinga2-ido-mysql:
+icinga2-ido-mysql       icinga2-ido-mysql/remote/host   select
+icinga2-ido-mysql       icinga2-ido-mysql/mysql/admin-user      string  root
+# Perform upgrade on database for icinga2-ido-mysql with dbconfig-common?
+icinga2-ido-mysql       icinga2-ido-mysql/dbconfig-upgrade      boolean true
+# Do you want to purge the database for icinga2-ido-mysql?
+icinga2-ido-mysql       icinga2-ido-mysql/purge boolean false
+icinga2-ido-mysql       icinga2-ido-mysql/remote/port   string
+icinga2-ido-mysql       icinga2-ido-mysql/upgrade-error select  abort
+icinga2-ido-mysql       icinga2-ido-mysql/missing-db-package-error      select  abort
+# MySQL database name for icinga2-ido-mysql:
+icinga2-ido-mysql       icinga2-ido-mysql/db/dbname     string  icinga2idomysql
+# Deconfigure database for icinga2-ido-mysql with dbconfig-common?
+icinga2-ido-mysql       icinga2-ido-mysql/dbconfig-remove       boolean
+# Host running the MySQL server for icinga2-ido-mysql:
+icinga2-ido-mysql       icinga2-ido-mysql/remote/newhost        string
+# Do you want to back up the database for icinga2-ido-mysql before upgrading?
+icinga2-ido-mysql       icinga2-ido-mysql/upgrade-backup        boolean true
+# Reinstall database for icinga2-ido-mysql?
+icinga2-ido-mysql       icinga2-ido-mysql/dbconfig-reinstall    boolean false

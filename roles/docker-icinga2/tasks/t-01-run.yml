@@ -1,0 +1,47 @@
+---
+#ICINGA2
+- name: prepare config directory
+  file:
+    path: /dir-config/icinga2
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+# database directory not needed we use mariadb
+
+#- name: copy the config files
+#  copy:
+#    src: "{{ inventory_dir }}/docker/icinga2/configs/"
+#    dest: /dir-config/apache2
+
+# create the data volume for icinga2 communication
+- name: check if icinga2_cmd exists
+  command: docker volume inspect icinga2_cmd
+  register: icinga2_cmd_exists
+  failed_when: false
+
+- name: create volume icinga2_cmd
+  command: docker volume create --name icinga2_cmd
+  when: icinga2_cmd_exists|failed
+
+#run -d --network host -v icinga2_cmd:/var/run/icinga2/cmd/ --name icinga2 icinga2
+
+- name: Start a icinga2 container
+  docker_container:
+    name: icinga2-{{ inventory_hostname_short }}
+    image: "{{ docker.registry }}/icinga2"
+    network_mode: host
+    volumes:
+      - icinga2_cmd:/var/run/icinga2/cmd/
+#    command:
+
+#docker run -d --network host -v icinga2_cmd:/var/run/icinga2/cmd/ --name icingaweb2 icingaweb2
+- name: Start a icingaweb2 container
+  docker_container:
+    name: icingaweb2-{{ inventory_hostname_short }}
+    image: "{{ docker.registry }}/icingaweb2"
+    network_mode: host
+    volumes:
+      - icinga2_cmd:/var/run/icinga2/cmd/
+#    command:

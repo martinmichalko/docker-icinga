@@ -1,0 +1,40 @@
+---
+#DEBIAN
+- name: DBUG variable inventory_dir
+  debug:
+    msg: "{{inventory_dir}}/pkg-requirements.yml"
+  tags: debug
+- name: include system pkg req variable
+  include_vars: "{{inventory_dir}}/pkg-requirements.yml"
+- name: install additional packages with apt
+  apt:
+    name: "{{item}}"
+    state: present
+  with_items: "{{packages}}"
+  when: packages is defined
+
+  # when the pip was installed by apt-get this error have arisen
+  #    from requests.compat import IncompleteRead
+  #ImportError: cannot import name 'IncompleteRead'
+
+  #solution http://stackoverflow.com/questions/27341064/how-do-i-fix-importerror-cannot-import-name-incompleteread/27341847#27341847
+  # easy_install3 -U pip
+  #python3-setuptools have to be installed also
+
+- block:
+    - name: check if the pip is already installed
+      command: pip3 list --format freeze | grep pip
+      register: pip_check
+  rescue:
+    - name: pip is not installed and going to install it
+      command: easy_install3 -U pip
+
+- name: include pip req variable
+  include_vars: "{{inventory_dir}}/pip-requirements.yml"
+
+- name: install with pip
+  pip:
+    executable: pip3
+    name: "{{item}}"
+  with_items: "{{pip_packages}}"
+  when: pip_packages is defined

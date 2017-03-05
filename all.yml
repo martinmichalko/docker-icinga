@@ -1,0 +1,6 @@
+---
+
+#- include: packages-req.yml
+- include: docker.yml
+- include: docker-registry.yml
+- include: docker-mariadb.yml

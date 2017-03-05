@@ -1,0 +1,7 @@
+---
+# vars file for docker-engine
+
+docker_repo_key_id: '58118E89F3A912897C070ADBF76221572C52609D'
+#hkp://p80.pool.sks-keyservers.net:80 has outages
+docker_repo_keyserver: 'hkp://pgp.mit.edu:80'
+docker_repo: 'deb https://apt.dockerproject.org/repo debian-jessie main'

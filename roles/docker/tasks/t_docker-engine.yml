@@ -1,0 +1,54 @@
+---
+
+- name: install necessary packages on Debian
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    state: present
+  with_items:
+      - apt-transport-https
+      - ca-certificates
+      - bridge-utils
+      - software-properties-common
+  environment: "{{ proxy_env }}"
+
+- name: DEBUG variable {{ docker_repo_keyserver }}
+  debug:
+    var: docker_repo_keyserver
+
+- name: add docker repo key
+  apt_key:
+    keyserver: "{{ docker_repo_keyserver }}"
+    id: "{{ docker_repo_key_id }}"
+  environment: "{{ proxy_env }}"
+
+- name: add docker repository
+  apt_repository:
+    repo: "{{ docker_repo }}"
+    state: present
+    update_cache: yes
+
+#    Create or modify /etc/docker/daemon.json on the client machine
+#    { "insecure-registries":["myregistry.example.com:5000"] }
+
+- name: prepare directory for the config file
+  file:
+    path: /etc/docker
+    owner: root
+    group: root
+    mode: 0644
+    state: directory
+
+- name: prepare clients for insecure registry create file daemon.json
+  template:
+    src: docker-daemon.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: 0644
+
+- name: install docker-engine
+  apt:
+    name: docker-engine
+    state: present
+  environment: "{{ proxy_env }}"

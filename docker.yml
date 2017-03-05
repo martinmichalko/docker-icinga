@@ -1,0 +1,8 @@
+---
+- name: install docker
+  hosts: all:!localhost
+  roles:
+    #- { role: docker-centos, when: ansible_distribution == 'Centos' }
+    - { role: docker, when: ansible_distribution == 'Debian' }
+
+  environment: "{{proxy_env}}"

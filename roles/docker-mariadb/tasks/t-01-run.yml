@@ -1,0 +1,60 @@
+---
+
+- name: prepare config directory
+  file:
+    path: /dir-config/mariadb
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: prepare database directory
+  file:
+    path: /dir-data/mariadb
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: copy the config files
+  copy:
+    src: "{{ inventory_dir }}/docker/mariadb/configs/mariadb-cnf-files/"
+    dest: /dir-config/mariadb
+
+#- name: DEBUG inventory_hostname_short variable
+#  debug:
+#    var: inventory_hostname_short
+#  tags: debug
+
+- name: Start a mariadb container on first cluster node
+  docker_container:
+    name: mariadb-{{ inventory_hostname_short }}
+    image: "localhost:5000/mariadb"
+    network_mode: host
+    volumes:
+      - /dir-config/mariadb:/etc/mysql/conf.d:ro
+      - /dir-data/mariadb:/var/lib/mysql:rw
+    command: mysqld --wsrep-new-cluster
+  when: inventory_hostname_short == "node1"
+
+- name: wait for database running on first cluster node
+  wait_for:
+    port: 3306
+    delay: 5
+  when: inventory_hostname_short == "node1"
+
+#    Create or modify /etc/docker/daemon.json on the client machine
+#    { "insecure-registries":["myregistry.example.com:5000"] }
+#    Restart docker daemon
+#    sudo /etc/init.d/docker restart
+
+- name: Start a mariadb container on rest cluster nodes
+  docker_container:
+    name: mariadb-{{ inventory_hostname_short }}
+    image: "{{ docker.registry }}/mariadb"
+    network_mode: host
+    volumes:
+      - /dir-config/mariadb:/etc/mysql/conf.d:ro
+      - /dir-data/mariadb:/var/lib/mysql:rw
+    command: mysqld
+  when: inventory_hostname_short != "node1"

@@ -1,0 +1,16 @@
+# MySQL application password for icinga2-ido-mysql:
+icinga2-ido-mysql       icinga2-ido-mysql/mysql/app-pass        password        icinga123
+icinga2-ido-mysql       icinga2-ido-mysql/password-confirm      password        icinga123
+icinga2-ido-mysql       icinga2-ido-mysql/mysql/admin-pass      password        icinga123
+icinga2-ido-mysql       icinga2-ido-mysql/app-password-confirm  password        icinga123
+# Connection method for MySQL database of icinga2-ido-mysql:
+# Configure database for icinga2-ido-mysql with dbconfig-common?
+icinga2-ido-mysql       icinga2-ido-mysql/dbconfig-install      boolean true
+icinga2-ido-mysql       icinga2-ido-mysql/enable        boolean true
+# Database type to be used by icinga2-ido-mysql:
+icinga2-ido-mysql       icinga2-ido-mysql/db/app-user   string  icinga2
+# Host name of the MySQL database server for icinga2-ido-mysql:
+icinga2-ido-mysql       icinga2-ido-mysql/remote/host   127.0.0.1
+icinga2-ido-mysql       icinga2-ido-mysql/mysql/admin-user      string  icinga2
+# MySQL database name for icinga2-ido-mysql:
+icinga2-ido-mysql       icinga2-ido-mysql/db/dbname     string  icinga2

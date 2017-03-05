@@ -1,0 +1,9 @@
+<network>
+  <name>mariadb.mgmt</name>
+  <forward mode='nat'/>
+  <bridge name='mariadb.mgmt' stp='on' delay='0'/>
+  <virtualport type='openvswitch'>
+  </virtualport>
+  <ip address='192.168.92.1' netmask='255.255.255.0'>
+  </ip>
+</network>

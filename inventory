@@ -1,0 +1,21 @@
+[localhost]
+localhost ansible_connection=local
+
+[nodes:vars]
+ansible_connection=ssh
+ansible_ssh_user=root
+ansible_ssh_pass={{ os_root_password }}
+
+[back-end]
+node1.mariadb.mate.solutions ansible_host=192.168.92.10
+node2.mariadb.mate.solutions ansible_host=192.168.92.11
+node3.mariadb.mate.solutions ansible_host=192.168.92.12
+
+[front-end]
+node1.mariadb.mate.solutions ansible_host=192.168.92.10
+node2.mariadb.mate.solutions ansible_host=192.168.92.11
+node3.mariadb.mate.solutions ansible_host=192.168.92.12
+
+[nodes:children]
+back-end
+front-end

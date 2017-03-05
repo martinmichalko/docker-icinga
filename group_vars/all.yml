@@ -1,0 +1,69 @@
+---
+project: mariadb
+dns_resolver: 192.168.1.1
+
+#vm_os_type: centos-7.3
+vm_distribution: debian
+vm_release: 8
+
+#for centos image size is not working
+vm_image_size: 5G
+
+vm_image_dir: /virt/sen-imgs
+os_root_password: 123
+vm_vnc_port: 63700
+#each node will have its own port with increment 1 according to list
+
+#network definition
+networks:
+  - name: mgmt
+    config:
+      - gateway: 192.168.92.1
+        netmask: 255.255.255.0
+  - name: prod
+    config:
+      - gateway: 192.168.93.1
+        netmask: 255.255.255.0
+
+first_ip_address: 10
+
+vm_net_dir: /etc/sysconfig/network-scripts/
+vm_net_model: e1000
+
+#all other ip addresses will be with the step 1
+#derived from network_gateway and first_ip_address
+
+#nodes listing:
+nodes:
+  - node1
+  - node2
+  - node3
+
+dockerfiles:
+  - mariadb
+  - icinga2
+  - icingaweb2
+
+dns_planned: False
+
+additional_packages:
+  - vim
+  - ranger
+
+proxy_env:
+  http_proxy: "http://192.168.1.1:3128"
+  https_proxy: "https://192.168.1.1:3128"
+
+ntp_config_server: 192.168.1.1
+timezone: "Europe/Bratislava"
+
+docker:
+  registry: "{{ hostvars[groups['nodes'][0]]['ansible_fqdn'] }}:5000"
+
+ansible_python_interpreter: /usr/bin/python3
+
+
+db_root_password: 123
+db_icinga_name: icinga
+db_icinga_user: icinga
+db_icinga_password: icinga123
