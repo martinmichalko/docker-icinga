@@ -23,11 +23,13 @@ RUN rm -r /var/lib/mysql
 
 # external volumes possible
 # whole config directory:
-VOLUME /etc/mysql/conf.d
+# default directory /etc/mysql/conf.d
+VOLUME /dir-config/
 
 #data directory:
 #together with the file to Identify the node with the most advanced node state ID. /var/lib/mysql/grastate.dat
-VOLUME /var/lib/mysql
+#default directory /var/lib/mysql
+VOLUME /dir-data/
 
 ## copy startup scripts and configuration files
 COPY scripts /app/

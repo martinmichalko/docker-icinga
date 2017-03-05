@@ -4,3 +4,4 @@
 - include: docker.yml
 - include: docker-registry.yml
 - include: docker-mariadb.yml
+- include: docker-icinga2.yml

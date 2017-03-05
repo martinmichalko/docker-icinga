@@ -4,6 +4,8 @@ set -x
 
 # define variable defaults
 DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-123}
+CONFIG_FILE=${CONFIG_FILE:-/etc/mysql/my.cnf}
+DIR_DATA=${DIR_DATA:-/var/lib/mysql}
 
 wait_for_db() {
     echo " wait for database to come up ..."
@@ -15,7 +17,16 @@ wait_for_db() {
 
 echo "$@"
 
-if [ ! -d /var/lib/mysql/mysql ]; then
+if [ -f /dir-config/my.cnf ]; then
+    echo "external config provided";
+    CONFIG_FILE="/dir-config/my.cnf";
+fi;
+
+if [ -d /dir-data/mysql ]; then
+    DIR_DATA="/dir-data";
+fi;
+
+if [ ! -d $DIR_DATA/mysql ]; then
     mysql_install_db --user=mysql
 
     #One problem with starting the MySQL server daemon directly is that if it crashes,
@@ -33,7 +44,18 @@ if [ ! -d /var/lib/mysql/mysql ]; then
             FLUSH PRIVILEGES;
 EOSQL
 
-   mysqladmin -u root -p$DB_ROOT_PASSWORD shutdown
-   fi
+    mysqladmin -u root -p$DB_ROOT_PASSWORD shutdown
+fi
 
+#Global Options for maysqld
+#--defaults-file=# 	Only read default options from the given file #.
+PARAMETERS="$@"
+if [ "$PARAMETERS" == "mysqld" ]; then
+    set -- "mysqld" "--defaults-file=$CONFIG_FILE" "--datadir=$DIR_DATA";
+fi
+if [ "$PARAMETERS" == "mysqld --wsrep-new-cluster" ]; then
+    set -- "mysqld" "--defaults-file=$CONFIG_FILE" "--datadir=$DIR_DATA" "--wsrep-new-cluster";
+fi
+
+echo "$@"
 exec "$@"

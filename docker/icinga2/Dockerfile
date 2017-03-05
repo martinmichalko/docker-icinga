@@ -30,7 +30,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install icinga2 icinga2-ido-mysql
 
 ### external volumes possible - only config data is database
 #whole config directory:
-VOLUME  /etc/icinga2/conf.d/
+VOLUME  /etc/icinga2/
 
 #named pipe located at "/var/run/icinga2/cmd/icinga2.cmd" to send commands
 VOLUME /var/run/icinga2/cmd/

@@ -23,13 +23,18 @@ if [ ! -f "${initfile}" ]; then
     icingacli setup token create
 
     echo "timezone set to Europe/Bratislava"
-    sed -i -- 's|;date.timezone =|date.timezone = "Europe/Bratislava"|' /etc/php5/apache2/php.ini 
+    sed -i -- 's|;date.timezone =|date.timezone = "Europe/Bratislava"|' /etc/php5/apache2/php.ini
+
+    #if there is external config file provided in dir-config
+    if [ -f /dir-config/config.ini ]; then
+        echo "external config provided - link will be created";
+        rm -r /etc/icingaweb2;
+        ln -s /dir-config /etc/icingaweb2;
+    fi;
 
     touch ${initfile};
     echo "first start finished";
 fi;
-
-
 
 #and apache2ctl with config file and foreground
 exec "$@"

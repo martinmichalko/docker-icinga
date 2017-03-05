@@ -1,19 +1,22 @@
 ---
 #ICINGA2
-- name: prepare config directory
-  file:
-    path: /dir-config/icinga2
-    state: directory
-    owner: root
-    group: root
-    mode: 0755
-
-# database directory not needed we use mariadb
-
+#prepare config directory in two steps create it and copy
+#prepared configuration files from central location
+#not used in this scenario more in README docker icinga2
+#- name: prepare config directory
+#  file:
+#    path: /dir-config/icinga2
+#    state: directory
+#    owner: root
+#    group: root
+#    mode: 0755
+#
 #- name: copy the config files
 #  copy:
 #    src: "{{ inventory_dir }}/docker/icinga2/configs/"
 #    dest: /dir-config/apache2
+
+# database directory not needed we use mariadb
 
 # create the data volume for icinga2 communication
 - name: check if icinga2_cmd exists

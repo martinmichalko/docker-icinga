@@ -32,8 +32,8 @@
     image: "localhost:5000/mariadb"
     network_mode: host
     volumes:
-      - /dir-config/mariadb:/etc/mysql/conf.d:ro
-      - /dir-data/mariadb:/var/lib/mysql:rw
+      - /dir-config/mariadb:/dir-config:ro
+      - /dir-data/mariadb:/dir-data:rw
     command: mysqld --wsrep-new-cluster
   when: inventory_hostname_short == "node1"
 
@@ -54,7 +54,7 @@
     image: "{{ docker.registry }}/mariadb"
     network_mode: host
     volumes:
-      - /dir-config/mariadb:/etc/mysql/conf.d:ro
-      - /dir-data/mariadb:/var/lib/mysql:rw
+      - /dir-config/mariadb:/dir-config:ro
+      - /dir-data/mariadb:/dir-data:rw
     command: mysqld
   when: inventory_hostname_short != "node1"

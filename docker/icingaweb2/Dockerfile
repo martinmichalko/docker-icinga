@@ -29,9 +29,10 @@ RUN apt-get -y install icingaweb2
 
 ### external volumes possible - only config data is database
 #whole config directory:
-VOLUME  /etc/icinga2/conf.d/
+VOLUME /dir-config/
 
 #named pipe located at "/var/run/icinga2/cmd/icinga2.cmd" to send commands
+#between icinga2 and icingaweb2:
 VOLUME /var/run/icinga2/cmd/
 
 ## copy startup scripts and configuration files

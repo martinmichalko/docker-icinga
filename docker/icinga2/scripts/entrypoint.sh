@@ -2,6 +2,7 @@
 set -x
 
 #entrypoint - ICINGA2
+CONFIG_FILE=${CONFIG_FILE:-/etc/icinga2/icinga2.conf}
 DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-123}
 DB_ICINGA_USER=${DB_ICINGA_USER:-icinga2}
 DB_ICINGA_PASSWORD=${DB_ICINGA_PASSWORD:-icinga123}
@@ -26,14 +27,22 @@ if [ ! -f "${initfile}" ]; then
 
     #if directory /run/icinga2 does not exist create it with rights nagios:www-data
     chown -R nagios:www-data /run/icinga2;
-    echo "activating command and mysql feature";
-    icinga2 feature enable ido-mysql command
-    echo "activated command and mysql feature";
-    #change the localhost to 127.0.0.1 in file features-enabled/ido-mysql.conf
-    sed -i -- 's|localhost|127.0.0.1|' /etc/icinga2/features-enabled/ido-mysql.conf
-    echo "icinga2 stopped";
+
+    #if there is external config file provided in dir-config
+    if [ -f /dir-config/icinga2.conf ]; then
+        echo "external config provided";
+        CONFIG_FILE=/dir-config/icinga2.conf;
+    else
+        echo "activating command and mysql feature";
+        icinga2 feature enable ido-mysql command
+        echo "activated command and mysql feature";
+        #change the localhost to 127.0.0.1 in file features-enabled/ido-mysql.conf
+        sed -i -- 's|localhost|127.0.0.1|' /etc/icinga2/features-enabled/ido-mysql.conf;
+    fi;
     touch ${initfile};
     echo "first start finished";
+
+    set -- "$@" "-c" "$CONFIG_FILE"
 fi;
 
 exec "$@";
