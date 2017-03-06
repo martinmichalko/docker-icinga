@@ -2,15 +2,22 @@
 #ICINGA2
 #prepare config directory in two steps create it and copy
 #prepared configuration files from central location
-#not used in this scenario more in README docker icinga2
-#- name: prepare config directory
-#  file:
-#    path: /dir-config/icinga2
-#    state: directory
-#    owner: root
-#    group: root
-#    mode: 0755
-#
+- name: prepare config directory
+  file:
+    path: /dir-config/icinga2
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: prepare config directory
+  file:
+    path: /dir-config/icingaweb2
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
 #- name: copy the config files
 #  copy:
 #    src: "{{ inventory_dir }}/docker/icinga2/configs/"
@@ -37,6 +44,7 @@
     network_mode: host
     volumes:
       - icinga2_cmd:/var/run/icinga2/cmd/
+      - /dir-config/icinga2:/dir-config:rw
 #    command:
 
 #docker run -d --network host -v icinga2_cmd:/var/run/icinga2/cmd/ --name icingaweb2 icingaweb2
@@ -47,4 +55,5 @@
     network_mode: host
     volumes:
       - icinga2_cmd:/var/run/icinga2/cmd/
+      - /dir-config/icingaweb2:/dir-config:rw
 #    command:

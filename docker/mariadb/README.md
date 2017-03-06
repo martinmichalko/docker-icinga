@@ -15,9 +15,9 @@ Database can be prepared by started container for the first time only - if not p
 
 ```bash
 docker run --name mariadb-node1 --network host \
--v /dir-config/mariadb:/etc/mysql/conf.d:ro \
--v /dir-data/mariadb:/var/lib/mysql:rw \
- node1.mariadb.mate.solutions:5000/mariadb mysqld --wsrep-new-cluster
+-v /dir-config/mariadb:/dir-config:ro \
+-v /dir-data/mariadb:/dir-data:rw \
+localhost:5000/mariadb mysqld --wsrep-new-cluster
 ```
 
 ### Start the rest nodes:
@@ -25,13 +25,13 @@ of course with the correct galera config
 
 ```bash
 docker run --name mariadb-node2 --network host \
--v /dir-config/mariadb:/etc/mysql/conf.d:ro \
--v /dir-data/mariadb:/var/lib/mysql:rw \
+-v /dir-config/mariadb:/dir-config:ro \
+-v /dir-data/mariadb:/dir-data:rw \
  node1.mariadb.mate.solutions:5000/mariadb mysqld
 
 docker run --name mariadb-node3 --network host \
--v /dir-config/mariadb:/etc/mysql/conf.d:ro \
--v /dir-data/mariadb:/var/lib/mysql:rw \
+-v /dir-config/mariadb:/dir-config:ro \
+-v /dir-data/mariadb:/dir-data:rw \
  node1.mariadb.mate.solutions:5000/mariadb mysqld
 ```
 

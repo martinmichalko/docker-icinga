@@ -30,7 +30,15 @@ if [ ! -f "${initfile}" ]; then
         echo "external config provided - link will be created";
         rm -r /etc/icingaweb2;
         ln -s /dir-config /etc/icingaweb2;
+    else
+        echo "internal config will be moved to /dir-config"
+        cp -r /etc/icingaweb2/* /dir-config;
+        rm -r /etc/icingaweb2;
+        ln -s /dir-config /etc/icingaweb2;
     fi;
+    #in both cases the owner has to be chnaged to ensure work with files
+    chown -R root:icingaweb2 /dir-config
+    chmod -R g+w /dir-config
 
     touch ${initfile};
     echo "first start finished";
