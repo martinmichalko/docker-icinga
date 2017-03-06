@@ -16,11 +16,47 @@
   debug:
     var: docker_repo_keyserver
 
-- name: add docker repo key
+#- name: add docker repo key
+#  apt_key:
+#    keyserver: "{{ docker_repo_keyserver }}"
+#    id: "{{ docker_repo_key_id }}"
+#  register: cmd_result
+#  retries: 5
+#  until: cmd_result | success
+#  environment: "{{ proxy_env }}"
+
+- name: prepare directory for the docker key
+  file:
+    path: /root/dockerkey
+    owner: root
+    group: root
+    mode: 0640
+    state: directory
+
+
+- name: add repo key for docker from local file
+  copy:
+    src: templates/gpg-key-for-docker
+    dest: /root/dockerkey/gpg-key-for-docker
+    owner: root
+    group: root
+    mode: 0640
+
+- name: add repo key for docker from local file
   apt_key:
-    keyserver: "{{ docker_repo_keyserver }}"
-    id: "{{ docker_repo_key_id }}"
-  environment: "{{ proxy_env }}"
+    id: 0EBFCD88
+    file: /root/dockerkey/gpg-key-for-docker
+    state: present
+
+- name: get the fingerprint of imported key 0EBFCD88
+  command: "apt-key fingerprint 0EBFCD88"
+  register: cmd_result
+  tags: debug
+
+- name: print the fingerprint of key 0EBFCD88
+  debug:
+    msg: "{{ cmd_result.stdout }}"
+  tags: debug
 
 - name: add docker repository
   apt_repository:
