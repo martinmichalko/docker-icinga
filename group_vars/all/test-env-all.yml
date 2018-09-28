@@ -1,0 +1,66 @@
+---
+install_location: "http://ftp.sk.debian.org/debian/dists/stable/main/installer-amd64/"
+volume_pool: virt
+volumes_location: "/data/virt"
+
+project: icinga2
+dns_resolver: 192.168.1.1
+
+#vm_os_type: centos-7.3
+vm_distribution: debian
+vm_release: 9
+
+#for centos image size is not working
+vm_disk_size: "8G"
+
+vm_memory: 2048
+vm_cpus: 2
+vm_image_dir: "/data/virt"
+os_root_password: 123
+
+#each node will have its own port with increment 1 according to list
+
+#network definition
+networks:
+  mgmt:
+    gateway: 192.168.90.1
+    dhcp_start: 192.168.90.150
+    dhcp_end: 192.168.90.224
+    netmask: 255.255.255.0
+  prod:
+    gateway: 192.168.91.1
+    dhcp_start: 192.168.91.150
+    dhcp_end: 192.168.91.224
+    netmask: 255.255.255.0
+
+first_ip_address: 11
+
+#all other ip addresses will be with the step 1
+#derived from network_gateway and first_ip_address
+
+#nodes listing:
+source: "source"
+source_ip_address: 5
+
+nodes:
+  - db1
+  - db2
+  - db3
+  - web1
+  - web2
+  - registry
+
+domain: "{{project}}.mate.solutions"
+
+dns_planned: False
+
+additional_packages:
+  - vim
+  - ranger
+
+proxy_env:
+  http_proxy: "http://192.168.1.1:3128"
+  https_proxy: "http://192.168.1.1:3128"
+
+ntp_config_server: 192.168.1.1
+timezone: "Europe/Bratislava"

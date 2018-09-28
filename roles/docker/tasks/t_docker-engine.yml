@@ -22,7 +22,7 @@
     id: "{{ docker_repo_key_id }}"
   register: cmd_result
   retries: 5
-  until: cmd_result | success
+  until: cmd_result is success
   environment: "{{ proxy_env }}"
 
 #- name: prepare directory for the docker key

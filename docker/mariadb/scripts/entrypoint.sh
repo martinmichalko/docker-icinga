@@ -8,7 +8,7 @@ CONFIG_FILE=${CONFIG_FILE:-/etc/mysql/my.cnf}
 DIR_DATA=${DIR_DATA:-/var/lib/mysql}
 
 function wait_for_db {
-    mysql=( mysql --protocol=socket -uroot -hlocalhost --socket=/var/run/mysqld/mysqld.sock )
+    mysql=( mysql --protocol=socket -uroot -p$DB_ROOT_PASSWORD -hlocalhost --socket=/var/run/mysqld/mysqld.sock )
     for i in {30..0}; do
         if echo 'SELECT 1' | "${mysql[@]}" &> /dev/null; then
     				break
@@ -26,28 +26,28 @@ initfile="/app/first-run-done";
 # check if this is first container run
 if [ ! -f "${initfile}" ]; then
     echo "first start running";
-    
+
     #symbolic link between /dir-data and /var/lib/mysql will be created i every case during first start
     ln -s /dir-data /var/lib/mysql
     chown -R mysql:mysql /dir-data
     if [ -d /dir-data/mysql ]; then
         echo "external data provided";
     else
-        mysql_install_db --datadir="$DIR_DATA" --user=mysql
+        mysql_install_db --datadir="${DIR_DATA}" --user=mysql
 
-        mysqld --skip-networking --datadir="$DIR_DATA" --socket=/var/run/mysqld/mysqld.sock &
+        mysqld --skip-networking --datadir="${DIR_DATA}" --socket=/var/run/mysqld/mysqld.sock &
 
         wait_for_db
 
         mysql --protocol=socket -uroot -hlocalhost --socket=/var/run/mysqld/mysqld.sock <<-EOSQL
                 DELETE FROM mysql.user;
-                CREATE USER 'root'@'%' IDENTIFIED BY '$DB_ROOT_PASSWORD';
+                CREATE USER 'root'@'%' IDENTIFIED BY "{$DB_ROOT_PASSWORD}";
                 GRANT ALL ON *.* TO 'root'@'%' WITH GRANT OPTION;
                 DROP DATABASE IF EXISTS test;
                 FLUSH PRIVILEGES;
 EOSQL
 
-        mysqladmin -u root -p$DB_ROOT_PASSWORD shutdown;
+        mysqladmin -u root -p${DB_ROOT_PASSWORD} shutdown;
     fi;
 
     # prepare config as config external has to be made as last step

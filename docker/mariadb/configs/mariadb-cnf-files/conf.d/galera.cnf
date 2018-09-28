@@ -12,5 +12,5 @@ bind-address=0.0.0.0
 wsrep_on=ON
 wsrep_provider=/usr/lib/galera/libgalera_smm.so
 wsrep_cluster_name="test_cluster"
-wsrep_cluster_address=gcomm://192.168.93.10,192.168.93.11,192.168.93.12
+wsrep_cluster_address=gcomm://192.168.90.11,192.168.90.12,192.168.90.13
 wsrep_sst_method=rsync

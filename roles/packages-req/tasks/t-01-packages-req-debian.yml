@@ -1,11 +1,6 @@
 ---
 #DEBIAN
-- name: DBUG variable inventory_dir
-  debug:
-    msg: "{{inventory_dir}}/pkg-requirements.yml"
-  tags: debug
-- name: include system pkg req variable
-  include_vars: "{{inventory_dir}}/pkg-requirements.yml"
+
 - name: install additional packages with apt
   apt:
     name: "{{item}}"
@@ -21,16 +16,14 @@
   # easy_install3 -U pip
   #python3-setuptools have to be installed also
 
-- block:
-    - name: check if the pip is already installed
-      command: pip3 list --format freeze | grep pip
-      register: pip_check
-  rescue:
-    - name: pip is not installed and going to install it
-      command: easy_install3 -U pip
-
-- name: include pip req variable
-  include_vars: "{{inventory_dir}}/pip-requirements.yml"
+#- block:
+#    - name: check if the pip3 is already installed
+#      shell: pip3 list --format freeze | grep pip
+#      register: pip_check
+#  rescue:
+#    - name: pip is not installed and going to install it
+#      command: easy_install3 -U pip
+#
 
 - name: install with pip
   pip:

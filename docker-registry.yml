@@ -1,8 +1,7 @@
 ---
 - name: install docker registry
-  hosts: node1.mariadb.mate.solutions
-
+  hosts: registry
   roles:
-#    - { role: docker-registry-centos, when: ansible_distribution == 'Centos' }
     - docker-registry
+    
   environment: "{{proxy_env}}"

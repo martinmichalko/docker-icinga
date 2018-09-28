@@ -1,0 +1,1 @@
+deb [arch=amd64,i386,ppc64el] http://ftp.heanet.ie/mirrors/mariadb/repo/10.3/debian stretch main

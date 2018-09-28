@@ -18,7 +18,7 @@
 
 - name: copy the config files
   copy:
-    src: "{{ inventory_dir }}/docker/mariadb/configs/mariadb-cnf-files/"
+    src: "{{ playbook_dir }}/docker/mariadb/configs/mariadb-cnf-files/"
     dest: /dir-config/mariadb
 
 #- name: DEBUG inventory_hostname_short variable

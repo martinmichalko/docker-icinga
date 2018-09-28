@@ -1,4 +1,4 @@
-FROM debian:jessie
+FROM debian:stretch
 MAINTAINER Martin Michalko (matemichal@gmail.com)
 
 ###ICINGA WEB2
@@ -10,20 +10,20 @@ COPY configs/sources.list /etc/apt/sources.list
 # set http_proxy for apt
 COPY configs/apt-conf-d-00proxy /etc/apt/apt.conf.d/00proxy
 
-#get repo key
-COPY configs/debmon.repo.key /app/configs/debmon.repo.key
-# and also add repositories for httpredir and debmon
-COPY configs/sources.debmon.list /etc/apt/sources.list.d/sources.debmon.list
-
-#add new apt key
-RUN apt-key add /app/configs/debmon.repo.key
-
 RUN apt-get update && apt-get -y upgrade
+RUN apt-get -y install gnupg2
+
+#get repo key #add new apt key
+COPY configs/icinga.key /app/configs/icinga.key
+RUN apt-key add /app/configs/icinga.key
+
+# and also add repositories for httpredir and debmon
+COPY configs/sources.icinga.list /etc/apt/sources.list.d/sources.icinga.list
 
 # packages installation
 RUN apt-get -y install apache2 apache2-doc apache2-utils
 RUN apt-get -y install libapache2-mod-python
-RUN apt-get -y install php5
+RUN apt-get -y install php5.6
 
 RUN apt-get -y install icingaweb2
 

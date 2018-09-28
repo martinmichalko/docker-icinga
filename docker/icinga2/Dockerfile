@@ -1,4 +1,4 @@
-FROM debian:jessie
+FROM debian:stretch
 MAINTAINER Martin Michalko (matemichal@gmail.com)
 
 ###ICINGA2
@@ -11,15 +11,16 @@ COPY configs/sources.list /etc/apt/sources.list
 COPY configs/apt-conf-d-00proxy /etc/apt/apt.conf.d/00proxy
 
 RUN apt-get update && apt-get -y upgrade
+RUN  apt-get -y install gnupg2
 
 #RUN  apt-get -y install wget
 #RUN wget -O - http://debmon.org/debmon/repo.key 2>/dev/null | apt-key add -
 #alternative approach
-COPY configs/debmon.repo.key /app/configs/debmon.repo.key
-RUN apt-key add /app/configs/debmon.repo.key
+COPY configs/icinga.key /app/configs/icinga.key
+RUN apt-key add /app/configs/icinga.key
 
 # and also httpredir and debmon icinga2 and icingaweb2 both
-COPY configs/sources.debmon.list /etc/apt/sources.list.d/sources.debmon.list
+COPY configs/sources.icinga.list /etc/apt/sources.list.d/sources.icinga.list
 
 RUN apt-get update
 

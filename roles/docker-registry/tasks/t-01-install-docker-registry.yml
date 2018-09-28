@@ -2,39 +2,23 @@
 
 - name: run own private docker registry
   docker_container:
-    name: node1-registry
+    name: registry
     image: registry:2
     restart_policy: always
     #ip:hostPort:containerPort
     published_ports: 5000:5000
   tags: registry_run
 
-- name: delete the previous versions of images if exist
-  docker_image:
-    name: localhost:5000/{{item}}
-    state: absent
-    force: True
-  with_items: "{{dockerfiles}}"
+# first we need public key for packages.icinga.com for icinga2
+- name: get the packages.icinga.com public key
+  local_action: get_url url=https://packages.icinga.com/icinga.key
+    dest="{{playbook_dir}}/docker/icinga2/configs/icinga.key" owner=martin group=martin mode=0640
   tags: images_push
 
-#we need docker files from project
-- name: create directory for dockerfiles
-  file:
-    path: "/docker/{{item}}"
-    state: directory
-  with_items: "{{dockerfiles}}"
-  tags: images_push
-
-# first we need public key for debmon for icinga2
-- name: get the debmon public key
-  local_action: get_url url=http://debmon.org/debmon/repo.key
-    dest="{{inventory_dir}}/docker/icinga2/configs/debmon.repo.key" mode=0640
-  tags: images_push
-
-# first we need public key for debmon for icingaweb2
-- name: get the debmon public key
-  local_action: get_url url=http://debmon.org/debmon/repo.key
-    dest="{{inventory_dir}}/docker/icingaweb2/configs/debmon.repo.key" mode=0640
+# first we need public key for packages.icinga.com for icingaweb2
+- name: get the packages.icinga.com public key
+  local_action: get_url url=https://packages.icinga.com/icinga.key
+    dest="{{playbook_dir}}/docker/icingaweb2/configs/icinga.key" owner=martin group=martin mode=0640
   tags: images_push
 
 - name: copy dockerfiles for containers needed
@@ -43,11 +27,28 @@
     dest: /docker/
   with_items: "{{dockerfiles}}"
   tags: images_push
+  register: dockerfiles_changed
+
+- name: remember which images need to recreate
+  set_fact:
+    recreate_images: "{{ recreate_images | default([]) + [item.item.name] }}"
+  when: item.changed
+  with_items: "{{ dockerfiles_changed.results }}"
+
+- name: delete the previous versions of images if exist only if the docker files were changed
+  docker_image:
+    name: localhost:5000/{{item.name}}
+    state: absent
+    force: True
+  when: item.name in recreate_images | default([])
+  with_items: "{{dockerfiles}}"
+  tags: images_push
 
 - name: Build an image and push it to a private repo
   docker_image:
     path: /docker/{{item}}
     name: localhost:5000/{{item}}
     push: yes
+  when: item.name in recreate_images | default([])
   with_items: "{{dockerfiles}}"
   tags: images_push

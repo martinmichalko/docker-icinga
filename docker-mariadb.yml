@@ -1,6 +1,6 @@
 ---
 - name: install and run mariadb in docker container
-  hosts: all:!localhost
+  hosts: backend
   serial: 1
   roles:
     - docker-mariadb

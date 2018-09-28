@@ -20,7 +20,7 @@
 
 #- name: copy the config files
 #  copy:
-#    src: "{{ inventory_dir }}/docker/icinga2/configs/"
+#    src: "{{ playbook_dir }}/docker/icinga2/configs/"
 #    dest: /dir-config/apache2
 
 # database directory not needed we use mariadb
