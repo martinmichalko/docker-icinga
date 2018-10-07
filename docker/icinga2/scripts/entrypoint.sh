@@ -51,7 +51,7 @@ if [ ! -f "${initfile}" ]; then
     #in both cases the owner has to be chnaged to ensure work with files
     chown -R nagios:nagios /dir-config
     chown -R icinga2:icinga2 /var/lib/icinga2/certs
-    
+    Dlzka
     icinga2 node setup --master
 
     touch ${initfile};

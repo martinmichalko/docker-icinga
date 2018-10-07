@@ -2,7 +2,7 @@
 #ICINGA2
 #prepare config directory in two steps create it and copy
 #prepared configuration files from central location
-- name: prepare config directory for "{{item}}"
+- name: prepare config directories
   file:
     path: /dir-config/{{item}}
     state: directory
@@ -11,10 +11,11 @@
     mode: 0755
   with_items:
     - icinga2
+    - icinga2-certificates
     - icingaweb2
     - apache2
 
-- name: copy the config files for "{{item}}"
+- name: copy the config files
   copy:
     src: "{{ playbook_dir }}/docker/{{item}}/configs/{{item}}-cnf-files/"
     dest: /dir-config/{{item}}
@@ -47,6 +48,7 @@
     volumes:
       - icinga2_cmd:/var/run/icinga2/cmd/
       - /dir-config/icinga2:/dir-config:rw
+      - /dir-config/icinga2-certificates:/var/lib/icinga2/certs:rw
 
 #docker run -d --network host -v icinga2_cmd:/var/run/icinga2/cmd/ --name icingaweb2 icingaweb2
 - name: Start a icingaweb2 container
