@@ -11,7 +11,7 @@ vm_distribution: debian
 vm_release: 9
 
 #for centos image size is not working
-vm_disk_size: "8G"
+vm_disk_size: "12G"
 
 vm_memory: 2048
 vm_cpus: 2

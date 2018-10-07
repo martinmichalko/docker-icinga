@@ -1,4 +1,6 @@
 ---
+ansible_python_interpreter: /usr/bin/python3
+
 packages:
   - python3
   - python3-setuptools
@@ -6,7 +8,7 @@ packages:
   - python3-pip
 
 pip_packages:
-  - docker-py
+  - docker
 
 dockerfiles:
   - mariadb
@@ -15,8 +17,6 @@ dockerfiles:
 
 docker:
   registry: "registry.icinga2.mate.solutions:5000"
-
-ansible_python_interpreter: /usr/bin/python3
 
 db_root_password: 123
 db_icinga_name: icinga

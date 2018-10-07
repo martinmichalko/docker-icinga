@@ -33,6 +33,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install icinga2 icinga2-ido-mysql
 #whole config directory:
 VOLUME  /dir-config/
 
+VOLUME  /var/lib/icinga2/certs
+
 #named pipe located at "/var/run/icinga2/cmd/icinga2.cmd" to send commands
 VOLUME /var/run/icinga2/cmd/
 

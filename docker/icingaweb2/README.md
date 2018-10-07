@@ -8,13 +8,13 @@ docker volume create --name=icinga2_cmd
 then we can use this volume in command for container icinga2:
 
 ```bash
-docker run -d --network host -v icinga2_cmd:/var/run/icinga2/cmd/ --name icinga2 icinga2
+docker run -rm -d --network host -v icinga2_cmd:/var/run/icinga2/cmd/ --name icinga2 icinga2
 ```
 
 and finally we can run also icingaweb2
 ```bash
 
-docker run -d --network host -v icinga2_cmd:/var/run/icinga2/cmd/ --name icingaweb2 icingaweb2
+docker run -rm -d --network host -v icinga2_cmd:/var/run/icinga2/cmd/ registry.icinga2.mate.solutions:5000/icingaweb2 icingaweb2
 ```
 ### Configuring after deployment
 
@@ -25,5 +25,9 @@ http://your-ip-addr-ess/icingaweb2/setup
 
 For security reason, you would require to generate the token and paste it on the first step of the wizard.
 
-The token you get form the file stored in main config directory:
+The token you get from the file stored in main config directory:
 cat /dir-config/icingaweb2/setup.token
+
+
+finally icingaweb2:
+http://your-ip-addr-ess/icingaweb2/

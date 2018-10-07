@@ -1,31 +1,36 @@
 #!/bin/bash
+set -e
 set -x
+
+SHORT_HOSTNAME=$(hostname -s)
+DATABASE_NODE="db${SHORT_HOSTNAME:(-1)}.$(hostname -d)"
 
 #entrypoint - ICINGA2
 CONFIG_FILE=${CONFIG_FILE:-/etc/icinga2/icinga2.conf}
 DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-123}
 DB_ICINGA_USER=${DB_ICINGA_USER:-icinga2}
 DB_ICINGA_PASSWORD=${DB_ICINGA_PASSWORD:-icinga123}
-
+DB=${DB:-$DATABASE_NODE}
 
 initfile="/app/first-run-done";
 # check if this is first container run
 if [ ! -f "${initfile}" ]; then
     echo "first start running";
     # PREPARE DATABASE icinga2 if it does not exist
-    mysqlshow -h 127.0.0.1 -u root -p$DB_ROOT_PASSWORD icinga2;
-    # -ne means not equal
-    if [ $? -ne 0 ]; then
+    if ! mysqlshow -h ${DB} -u root -p${DB_ROOT_PASSWORD} icinga2; then
         echo "creating new database in mysql";
-        mysql -h 127.0.0.1 -u root -p$DB_ROOT_PASSWORD -e 'CREATE DATABASE IF NOT EXISTS icinga2;';
-        mysql -h 127.0.0.1 -u root -p$DB_ROOT_PASSWORD -e "grant all privileges on icinga2.* to icinga2@localhost identified by 'icinga123';";
-        mysql -h 127.0.0.1 -u $DB_ICINGA_USER -p$DB_ICINGA_PASSWORD -D icinga2 < /usr/share/icinga2-ido-mysql/schema/mysql.sql;
+        mysql -h ${DB} -u root -p${DB_ROOT_PASSWORD} -e 'CREATE DATABASE IF NOT EXISTS icinga2;';
+        mysql -h ${DB} -u root -p${DB_ROOT_PASSWORD} -e "grant all privileges on icinga2.* to icinga2@$(hostname) identified by 'icinga123';";
+        mysql -h ${DB} -u ${DB_ICINGA_USER} -p${DB_ICINGA_PASSWORD} -D icinga2 < /usr/share/icinga2-ido-mysql/schema/mysql.sql;
+    else
+        mysql -h ${DB} -u root -p${DB_ROOT_PASSWORD} -e "grant all privileges on icinga2.* to icinga2@$(hostname) identified by 'icinga123';";
     fi;
 
     set -e
     usermod -a -G nagios www-data;
 
     #if directory /run/icinga2 does not exist create it with rights nagios:www-data
+
     chown -R nagios:www-data /run/icinga2;
 
     #if there is external config file provided in dir-config
@@ -40,16 +45,19 @@ if [ ! -f "${initfile}" ]; then
         echo "activating command and mysql feature";
         icinga2 feature enable ido-mysql command
         echo "activated command and mysql feature";
-        #change the localhost to 127.0.0.1 in file features-enabled/ido-mysql.conf
-        sed -i -- 's|localhost|127.0.0.1|' /etc/icinga2/features-enabled/ido-mysql.conf;
+        #change the localhost to $DB in file features-enabled/ido-mysql.conf
+        sed -i -- "s|localhost|$DB|" /etc/icinga2/features-enabled/ido-mysql.conf;
     fi;
     #in both cases the owner has to be chnaged to ensure work with files
     chown -R nagios:nagios /dir-config
+    chown -R icinga2:icinga2 /var/lib/icinga2/certs
+    
+    icinga2 node setup --master
 
     touch ${initfile};
     echo "first start finished";
 
-    set -- "$@" "-c" "$CONFIG_FILE"
+    set -- "$@" "-c" "${CONFIG_FILE}"
 fi;
 
 exec "$@";

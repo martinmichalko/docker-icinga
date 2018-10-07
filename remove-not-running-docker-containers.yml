@@ -1,0 +1,36 @@
+---
+- name: remove not running docker containers from all hosts
+  hosts: all:!localhost:!source
+#  hosts: registry
+  environment: "{{proxy_env}}"
+
+  tasks:
+  - name: get container status all
+    shell: docker container ls --all --quiet
+    register: docker_container_list_all
+
+  - name: get container status running
+    shell: docker container ls --quiet
+    register: docker_container_list_running
+
+  - name: debug variable docker_container_list_not_running
+    debug:
+      var: docker_container_list_all.stdout_lines
+
+  - name: debug variable docker_container_list_not_running
+    debug:
+      var: docker_container_list_running.stdout_lines
+
+  - name: get not running containers
+    set_fact:
+      docker_container_list_not_running: "{{docker_container_list_all.stdout_lines|difference(docker_container_list_running.stdout_lines)}}"
+
+  - name: debug variable docker_container_list_not_running
+    debug:
+      var: docker_container_list_not_running
+
+  - name: remove container
+    docker_container:
+      name: "{{item}}"
+      state: absent
+    with_items: "{{docker_container_list_not_running}}"

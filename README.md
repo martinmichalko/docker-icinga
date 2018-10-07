@@ -45,8 +45,9 @@ Get info about number of member nodes in cluster:
 mysql -h 127.0.0.1 -u root -p123 -e 'SELECT VARIABLE_VALUE as "cluster size" FROM INFORMATION_SCHEMA.GLOBAL_STATUS WHERE VARIABLE_NAME="wsrep_cluster_size"'
 ```
 
-The nodes should be restarted manually. The last node in the cluster has information "safe_to_bootstrap: 1" in file /dir-data/mariadb/grastate.dat
+The nodes should be restarted manually. The node in the cluster has information "safe_to_bootstrap: 1" in file /dir-data/mariadb/grastate.dat was the last running and can be started as first safely.
 
 if it is other then the node1 all nodes should be run again with the command docker run and the first node with the "mysqld --wsrep-new-cluster" at the end of the command docker run
 
-More detailed info are in README files in nested directories.
+More detailed info are in README files in nested directories - docker/  - common rules
+and then in each docker directory for each application

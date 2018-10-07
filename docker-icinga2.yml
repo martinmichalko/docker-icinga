@@ -1,6 +1,6 @@
 ---
 - name: install and run icinga2 in docker container
   hosts: frontend
-
+  serial: 1
   roles:
     - docker-icinga2

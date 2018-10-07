@@ -1,0 +1,9 @@
+---
+
+- name: process only one file as test
+  local_action: template
+    src=templates/docker/mariadb/README.md
+    dest=/etc/file.conf
+    owner: martin
+    group: martin
+    mode: 0644

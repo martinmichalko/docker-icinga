@@ -12,9 +12,10 @@
       - software-properties-common
   environment: "{{ proxy_env }}"
 
-- name: DEBUG variable {{ docker_repo_keyserver }}
-  debug:
-    var: docker_repo_keyserver
+#- name: DEBUG variable {{ docker_repo_keyserver }}
+#  debug:
+#    var: docker_repo_keyserver
+#  run_once: true
 
 - name: add docker repo key
   apt_key:

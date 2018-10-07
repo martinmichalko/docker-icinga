@@ -20,5 +20,5 @@ web2.icinga2.mate.solutions ansible_host=192.168.90.15
 registry.icinga2.mate.solutions ansible_host=192.168.90.16
 
 [nodes:children]
-back-end
-front-end
+backend
+frontend

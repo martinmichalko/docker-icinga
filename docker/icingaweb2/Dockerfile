@@ -11,7 +11,7 @@ COPY configs/sources.list /etc/apt/sources.list
 COPY configs/apt-conf-d-00proxy /etc/apt/apt.conf.d/00proxy
 
 RUN apt-get update && apt-get -y upgrade
-RUN apt-get -y install gnupg2
+RUN apt-get -y install gnupg2 mysql-client
 
 #get repo key #add new apt key
 COPY configs/icinga.key /app/configs/icinga.key
@@ -23,13 +23,14 @@ COPY configs/sources.icinga.list /etc/apt/sources.list.d/sources.icinga.list
 # packages installation
 RUN apt-get -y install apache2 apache2-doc apache2-utils
 RUN apt-get -y install libapache2-mod-python
-RUN apt-get -y install php5.6
+RUN apt-get -y install php7.0
 
 RUN apt-get -y install icingaweb2
 
 ### external volumes possible - only config data is database
 #whole config directory:
-VOLUME /dir-config/
+VOLUME /dir-config/icingaweb2
+VOLUME /dir-config/apache2
 
 #named pipe located at "/var/run/icinga2/cmd/icinga2.cmd" to send commands
 #between icinga2 and icingaweb2:

@@ -3,5 +3,5 @@
   hosts: registry
   roles:
     - docker-registry
-    
+
   environment: "{{proxy_env}}"

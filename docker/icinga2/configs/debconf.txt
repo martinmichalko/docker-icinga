@@ -10,7 +10,7 @@ icinga2-ido-mysql       icinga2-ido-mysql/enable        boolean true
 # Database type to be used by icinga2-ido-mysql:
 icinga2-ido-mysql       icinga2-ido-mysql/db/app-user   string  icinga2
 # Host name of the MySQL database server for icinga2-ido-mysql:
-icinga2-ido-mysql       icinga2-ido-mysql/remote/host   127.0.0.1
+icinga2-ido-mysql       icinga2-ido-mysql/remote/host   db1.icinga2.mate.solutions
 icinga2-ido-mysql       icinga2-ido-mysql/mysql/admin-user      string  icinga2
 # MySQL database name for icinga2-ido-mysql:
 icinga2-ido-mysql       icinga2-ido-mysql/db/dbname     string  icinga2
