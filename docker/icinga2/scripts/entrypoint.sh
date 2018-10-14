@@ -1,16 +1,29 @@
 #!/bin/bash
+# icinga2
 set -e
 set -x
 
 SHORT_HOSTNAME=$(hostname -s)
 DATABASE_NODE="db${SHORT_HOSTNAME:(-1)}.$(hostname -d)"
+GROUP_NAME=$(hostname)
+PROVIDER=${GROUP_NAME::3}1.$(hostname -d)
+MASTER_PROVIDER=${MASTER_PROVIDER:-$PROVIDER}
 
 #entrypoint - ICINGA2
-CONFIG_FILE=${CONFIG_FILE:-/etc/icinga2/icinga2.conf}
+
 DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-123}
 DB_ICINGA_USER=${DB_ICINGA_USER:-icinga2}
 DB_ICINGA_PASSWORD=${DB_ICINGA_PASSWORD:-icinga123}
 DB=${DB:-$DATABASE_NODE}
+
+PKI_TICKET=${PKI_TICKET:-}
+CONFIG_FILE=${CONFIG_FILE:-/etc/icinga2/icinga2.conf}
+
+DIR_CONFIG=${DIR_CONFIG:-/etc/icinga2}
+EXTERNAL_DIR_CONFIG=${EXTERNAL_DIR_CONFIG:-/dir-config}
+
+DIR_CA=${DIR_CA:-/var/lib/icinga2/ca}
+EXTERNAL_DIR_CA=${EXTERNAL_DIR_CA:-/dir-config/icinga2-ca}
 
 initfile="/app/first-run-done";
 # check if this is first container run
@@ -33,27 +46,52 @@ if [ ! -f "${initfile}" ]; then
 
     chown -R nagios:www-data /run/icinga2;
 
-    #if there is external config file provided in dir-config
-    if [ -f /dir-config/icinga2.conf ]; then
-        echo "external config provided - link will be created";
-        rm -r /etc/icinga2;
-        ln -s /dir-config /etc/icinga2;
-    else
-        cp -r /etc/icinga2/* /dir-config;
-        rm -r /etc/icinga2;
-        ln -s /dir-config /etc/icinga2;
-        echo "activating command and mysql feature";
-        icinga2 feature enable ido-mysql command
-        echo "activated command and mysql feature";
-        #change the localhost to $DB in file features-enabled/ido-mysql.conf
-        sed -i -- "s|localhost|$DB|" /etc/icinga2/features-enabled/ido-mysql.conf;
-    fi;
-    #in both cases the owner has to be chnaged to ensure work with files
-    chown -R nagios:nagios /dir-config
-    chown -R icinga2:icinga2 /var/lib/icinga2/certs
-    Dlzka
-    icinga2 node setup --master
+    ### USAGE RULES applied: config files ###
+    #first start shoulb be with basic config - no cluster - already provided
+    #1. installed config files replaced by those provided by docker file structure already in Dockerfile at the end
+    #2. if config files provide externally use them
+    # if [ -z "$(ls -A /etc)" ]; then      echo "Empty"; else echo "Files"; fi
+    if [ -z "$(ls -A ${EXTERNAL_DIR_CONFIG})" ]; then
+        echo "${EXTERNAL_DIR_CONFIG} is Empty config files will be prepared all for the first usage from the image";
+        ### USAGE RULE for config files applied
 
+        cp -r ${DIR_CONFIG}/* ${EXTERNAL_DIR_CONFIG}/;
+        # now applied
+        rm -r ${DIR_CONFIG};
+        ln -s ${EXTERNAL_DIR_CONFIG} ${DIR_CONFIG};
+
+        if [ "${SHORT_HOSTNAME:(-1)}" -eq "1" ]; then
+            echo "activating MASTER and mysql feature";
+            icinga2 node setup --master;
+        else
+            echo "activating client node with HA features";
+            mkdir -p /var/lib/icinga2/certs
+            cp /var/lib/icinga2/ca/ca.crt /var/lib/icinga2/certs/
+
+            icinga2 node setup --cn $(hostname) --zone $(hostname) \
+            --ticket ${PKI_TICKET} --endpoint ${MASTER_PROVIDER},${MASTER_PROVIDER},5665 \
+            --trustedcert /var/lib/icinga2/ca/ca.crt \
+            --accept-commands --accept-config
+        fi;
+        #change the localhost to $DB in file features-enabled/ido-mysql.conf
+        # All instances within the same zone (e.g. the master zone as HA cluster)
+        # must have the DB IDO feature enabled.
+        #https://icinga.com/docs/icinga2/latest/doc/06-distributed-monitoring/#distributed-monitoring-high-availability-features
+        sed -i -- "s|localhost|$DB|" /etc/icinga2/features-available/ido-mysql.conf;
+        #all instances have to enable checker notification and ido mysql and
+        #they will dynamically work with ido connection
+        icinga2 feature enable checker;
+        icinga2 feature enable notification;
+        icinga2 feature enable ido-mysql;
+    else
+        echo "${EXTERNAL_DIR_CONFIG} is with files so container will use them and link will be created";
+        rm -r ${DIR_CONFIG}
+        ln -s ${EXTERNAL_DIR_CONFIG} ${DIR_CONFIG};
+    fi;
+
+    # set the right owner at the end of configuration
+    chown -R nagios:nagios /dir-config
+    chown -R nagios:nagios /var/lib/icinga2
     touch ${initfile};
     echo "first start finished";
 

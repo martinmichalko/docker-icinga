@@ -1,0 +1,16 @@
+---
+#ICINGAweb2
+
+- name: Start a icingaweb2 container as a serial task
+  docker_container:
+    name: "icingaweb2-{{inventory_hostname_short}}"
+    image: "{{ docker.registry }}/icingaweb2"
+    pull: yes
+    network_mode: host
+    volumes:
+      - icinga2_cmd:/var/run/icinga2/cmd/
+      - /dir-config/icingaweb2:/dir-config/icingaweb2:rw
+      - /dir-config/apache2:/dir-config/apache2:ro
+  delegate_to: "{{item}}"
+  with_items: "{{groups['frontend']}}"
+  run_once: true

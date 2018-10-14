@@ -1,0 +1,6 @@
+---
+
+- name: reload service keepalived
+  systemd:
+    name: keepalived
+    state: reloaded

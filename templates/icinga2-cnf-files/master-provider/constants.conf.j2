@@ -1,0 +1,14 @@
+const PluginDir = "/usr/lib/nagios/plugins"
+const ManubulonPluginDir = "/usr/lib/nagios/plugins"
+const PluginContribDir = "/usr/lib/nagios/plugins"
+
+/* Our local instance name. By default this is the server's hostname as returned by `hostname --fqdn`.
+ * This should be the common name from the API certificate.
+ */
+const NodeName = "{{inventory_hostname}}"
+
+/* Our local zone name. */
+const ZoneName = "{{inventory_hostname}}"
+
+/* Secret key for remote node tickets */
+const TicketSalt = "{{icinga_ticketsalt}}"

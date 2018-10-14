@@ -46,7 +46,7 @@ if [ ! -f "${initfile}" ]; then
         #Import the database schema
         mysql -h ${DB_CONNECTION} -u root -p${DB_ROOT_PASSWORD} -D ${DB_NAME} < /usr/share/icingaweb2/etc/schema/mysql.schema.sql;
     fi;
-    #Insert administrator user in the icingaweb2 access database
+    #Insert administrator user in the icingaweb2 mysql access database
     # if database exists or not the situation can be without user
     SQL="grant all privileges on ${DB_NAME}.* to '${DB_ICINGAWEB_USER}'@'$(hostname)' identified by '${DB_ICINGAWEB_PASSWORD}';"
     mysql -h ${DB_CONNECTION} -u root -p${DB_ROOT_PASSWORD} -e "${SQL}";
@@ -65,6 +65,7 @@ if [ ! -f "${initfile}" ]; then
       WEBGROUP_ID=$(mysql -h ${DB_CONNECTION} -u ${DB_ICINGAWEB_USER} -p${DB_ICINGAWEB_PASSWORD} -D ${DB_NAME} -BN -e "${SQL}");
       SQL="INSERT INTO icingaweb_group_membership (group_id, username, ctime) VALUES (${WEBGROUP_ID}, 'admin', CURRENT_TIMESTAMP);";
       mysql -h ${DB_CONNECTION} -u ${DB_ICINGAWEB_USER} -p${DB_ICINGAWEB_PASSWORD} -D ${DB_NAME} -e "${SQL}";
+      # finaly web admin is created
     fi;
 
     #Make sure the ido-mysql and api features are enabled in Icinga 2: these have to be done in icinga2 container

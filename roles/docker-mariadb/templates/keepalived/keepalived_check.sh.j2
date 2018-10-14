@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# monitor mysql status
+# if this node mysql is dead and its slave delay less than 20 seconds, then stop its keepalived. The other node will bind the IP.
+
+delay_file="/etc/keepalived/slave_delay_second.log"
+slave_host=$1
+
+mysql -h ${slave_host} -u root -p{{db_root_password}} --connect_timeout=3 --execute="select version();"
+
+if [ $? -ne 0 ]; then
+ delayseconds=$(cat ${delay_file})
+ if [ ${delayseconds} -le 20 ]; then
+   /etc/init.d/keepalived stop
+ fi
+ exit 1 #bad
+fi
+
+# Get slave delay time and save it
+mysql -h ${slave_host} -u root -p{{db_root_password}} --connect_timeout=3 -e"select version();"
+
+if [ $? -eq 0 ]; then
+    delayseconds=$(mysql -h ${slave_host} -u root -p{{db_root_password}} --connect_timeout=3 -e "show slave status\G"|grep Seconds_Behind_Master|awk '{print \$2}')
+  if [[ "${delayseconds}" =~ ^[0-9]+$ ]] ; then
+     echo "${delayseconds}" > ${delay_file}
+  else
+     echo "9999" > ${delay_file}
+  fi
+fi
+
+exit 0 #good

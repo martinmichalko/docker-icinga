@@ -21,18 +21,18 @@
     dest="{{playbook_dir}}/docker/icingaweb2/configs/icinga.key" owner=martin group=martin mode=0640
   tags: images_push
 
-#### only for testing that the config files provided by ansible will be used in docker containers
-- name: only for testing that the config files provided by ansible will be used in docker containers
-  local_action: lineinfile
-  args:
-    path: "{{item}}"
-    regexp: '# This comment is only to test if the right config - provided by Ansible and not from image is used'
-    line: '# This comment is only to test if the right config - provided by Ansible and not from image is used'
-    state: absent
-  with_items:
-    - "{{playbook_dir}}/docker/mariadb/configs/mariadb-cnf-files/conf.d/galera.cnf"
-    - "{{playbook_dir}}/docker/icingaweb2/configs/icingaweb2-cnf-files/authentication.ini"
-    - "{{playbook_dir}}/docker/icingaweb2/configs/apache2-cnf-files/apache2.conf"
+##### only for testing that the config files provided by ansible will be used in docker containers
+#- name: only for testing that the config files provided by ansible will be used in docker containers
+#  local_action: lineinfile
+#  args:
+#    path: "{{item}}"
+#    regexp: '# This comment is only to test if the right config - provided by Ansible and not from image is used'
+#    line: '# This comment is only to test if the right config - provided by Ansible and not from image is used'
+#    state: absent
+#  with_items:
+#    - "{{playbook_dir}}/docker/mariadb/configs/mariadb-cnf-files/conf.d/galera.cnf"
+#    - "{{playbook_dir}}/docker/icingaweb2/configs/icingaweb2-cnf-files/authentication.ini"
+#    - "{{playbook_dir}}/docker/icingaweb2/configs/apache2-cnf-files/apache2.conf"
 
 - name: copy dockerfiles for containers needed
   synchronize:

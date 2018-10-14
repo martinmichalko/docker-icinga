@@ -1,0 +1,31 @@
+---
+#keepalived
+- name: prepare config directory for keepalived
+  file:
+    path: /etc/keepalived
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: copy from templates keepalived_check.sh as executable file
+  template:
+    src: "{{playbook_dir}}/roles/docker-mariadb/templates/keepalived/keepalived_check.sh.j2"
+    dest: "/etc/keepalived/keepalived_check.sh"
+    owner: root
+    group: root
+    mode: 0740
+
+- name: copy Configuration file '/etc/keepalived/keepalived.conf' must be a regular non-executable file
+  template:
+    src: "{{playbook_dir}}/roles/docker-mariadb/templates/keepalived/keepalived.conf.j2"
+    dest: "/etc/keepalived/keepalived.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload service keepalived
+  
+- name: install keepalived
+  apt:
+    name: keepalived
+    update_cache: yes

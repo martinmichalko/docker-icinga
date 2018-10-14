@@ -1,3 +1,5 @@
 ---
 
-  - include: t-01-run.yml
+  - include: t-01-preparation.yml
+  - include: t-02-run.yml
+  - include: t-03-finalize.yml

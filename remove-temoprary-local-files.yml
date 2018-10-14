@@ -1,0 +1,12 @@
+---
+- name: remove tmporary files
+#  hosts: all:!localhost:!source
+  hosts: localhost
+  environment: "{{proxy_env}}"
+
+  tasks:
+
+  - name: delete temporary directory for certificates from provider
+    file:
+      path: "{{playbook_dir}}/roles/docker-icinga2/files"
+      state: absent

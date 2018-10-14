@@ -1,5 +1,12 @@
 ---
 #ICINGA2
+
+#TEMPORARY ensure that the config dir for icinga2 is empty
+- name: TEMPORARY ensure that the config dir for icinga2 is empty
+  file:
+    path: /dir-config/icinga2
+    state: absent
+
 #prepare config directory in two steps create it and copy
 #prepared configuration files from central location
 - name: prepare config directories
@@ -8,10 +15,10 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: 0750
   with_items:
     - icinga2
-    - icinga2-certificates
+    - icinga2-ca
     - icingaweb2
     - apache2
 
@@ -20,7 +27,7 @@
     src: "{{ playbook_dir }}/docker/{{item}}/configs/{{item}}-cnf-files/"
     dest: /dir-config/{{item}}
   with_items:
-    - icinga2
+#    - icinga2
     - icingaweb2
 
 - name: copy the config files for apache
@@ -37,27 +44,3 @@
 - name: create volume icinga2_cmd - volume for icinga2 communication
   command: docker volume create --name icinga2_cmd
   when: icinga2_cmd_exists is failed
-
-#run -d --network host -v icinga2_cmd:/var/run/icinga2/cmd/ --name icinga2 icinga2
-- name: Start a icinga2 container
-  docker_container:
-    name: icinga2-{{ inventory_hostname_short }}
-    image: "{{ docker.registry }}/icinga2"
-    pull: yes
-    network_mode: host
-    volumes:
-      - icinga2_cmd:/var/run/icinga2/cmd/
-      - /dir-config/icinga2:/dir-config:rw
-      - /dir-config/icinga2-certificates:/var/lib/icinga2/certs:rw
-
-#docker run -d --network host -v icinga2_cmd:/var/run/icinga2/cmd/ --name icingaweb2 icingaweb2
-- name: Start a icingaweb2 container
-  docker_container:
-    name: icingaweb2-{{ inventory_hostname_short }}
-    image: "{{ docker.registry }}/icingaweb2"
-    pull: yes
-    network_mode: host
-    volumes:
-      - icinga2_cmd:/var/run/icinga2/cmd/
-      - /dir-config/icingaweb2:/dir-config/icingaweb2:rw
-      - /dir-config/apache2:/dir-config/apache2:ro
