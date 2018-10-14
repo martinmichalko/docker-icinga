@@ -118,6 +118,7 @@
       - /dir-config/icinga2-ca:/var/lib/icinga2/ca:rw
     env:
       PKI_TICKET: "{{hostvars[groups.frontend[0]].pki_tickets[inventory_hostname]}}"
+      DB: "{{virtual_ipaddress}}"
   when: inventory_hostname_short[-1:] != '1'
 ##########################
 - name: register files to prepare from template to RECEIVERS
