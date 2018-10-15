@@ -10,7 +10,7 @@ mysql -h ${slave_host} -u root -p{{db_root_password}} --connect_timeout=3 --exec
 
 if [ $? -ne 0 ]; then
  delayseconds=$(cat ${delay_file})
- if [ ${delayseconds} -le 20 ]; then
+ if [ ${delayseconds} -le 15 ]; then
    /etc/init.d/keepalived stop
  fi
  exit 1 #bad

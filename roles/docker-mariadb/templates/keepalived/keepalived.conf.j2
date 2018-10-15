@@ -5,20 +5,23 @@ router_id {{inventory_hostname}}
 vrrp_script check_mysql {
    script "/etc/keepalived/keepalived_check.sh {{inventory_hostname}}"
    interval 2
-   weight 2
 }
 
 vrrp_instance 50 {
-virtual_router_id 50
-advert_int 1
-nopreempt
-priority 50
-state BACKUP
-interface {{interface_for_vip}}
-virtual_ipaddress {
-{{virtual_ipaddress}} dev {{interface_for_vip}}
-}
-track_script {
- check_mysql
-}
+    virtual_router_id 50
+    advert_int 1
+    nopreempt
+    priority 50
+    state BACKUP
+    interface {{interface_for_vip}}
+    authentication {
+        auth_type AH
+        auth_pass password
+    }
+    virtual_ipaddress {
+      {{virtual_ipaddress}} dev {{interface_for_vip}}
+    }
+    track_script {
+        check_mysql
+    }
 }
