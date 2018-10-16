@@ -36,9 +36,9 @@ Equip all nodes with specific packages:
 ansible-playbook -i inventory all.yml
 ```
 
-Create custom snapshot when the database icinga2 is already created:
+Create snapshot when the database icinga2 is already created:
 ```bash
-ansible-playbook -i inventory /{{ path to ansible-testing environment}}/snapshot-create-custom.yml --extra-vars "@group_vars/all.yml"
+ansible-playbook -i inventory /path-for/ansible-testing_environment/snapshot-create.yml --extra-vars "@group_vars/all/test-env-all.yml" -e "snapshot_name=03-after-icinga-master-config"
 ```
 Get info about number of member nodes in cluster:
 ```bash

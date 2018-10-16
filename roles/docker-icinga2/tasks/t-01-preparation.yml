@@ -1,12 +1,5 @@
 ---
 #ICINGA2
-
-#TEMPORARY ensure that the config dir for icinga2 is empty
-- name: TEMPORARY ensure that the config dir for icinga2 is empty
-  file:
-    path: /dir-config/icinga2
-    state: absent
-
 #prepare config directory in two steps create it and copy
 #prepared configuration files from central location
 - name: prepare config directories

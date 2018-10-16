@@ -69,7 +69,7 @@ if [ ! -f "${initfile}" ]; then
             cp /var/lib/icinga2/ca/ca.crt /var/lib/icinga2/certs/
 
             icinga2 node setup --cn $(hostname) --zone $(hostname) \
-            --ticket ${PKI_TICKET} --endpoint ${MASTER_PROVIDER},${MASTER_PROVIDER},5665 \
+            --ticket ${PKI_TICKET} --endpoint ${MASTER_PROVIDER} \
             --trustedcert /var/lib/icinga2/ca/ca.crt \
             --accept-commands --accept-config
         fi;
