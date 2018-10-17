@@ -13,7 +13,7 @@ time ansible-playbook /data/projects/ansible2-6/pb/ansible-testing_environment/s
 --extra-vars "@/data/projects/ansible2-6/pb/docker-icinga/group_vars/all/test-env-all.yml" \
 --extra-vars "snapshot_name=02-after-docker-reg"
 
-time ansible-playbook -i inventory docker-mariadb.yml
+time ansible-playbook -i inventory docker-mariadb.yml && \
 time ansible-playbook -i inventory docker-icinga2.yml
 
 time ansible-playbook -i inventory \

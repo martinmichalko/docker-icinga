@@ -84,7 +84,7 @@
 #    group: systemd-network
 #  when: inventory_hostname_short[-1:] != '1'
 
-- name: Wait 120 seconds for port 5665 to become open on the host
+- name: Wait 120 seconds for port 5665 to become open on the provider
   wait_for:
     port: 5665
     timeout: 120
