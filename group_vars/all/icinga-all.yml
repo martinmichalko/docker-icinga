@@ -17,14 +17,15 @@ dockerfiles:
   - icingaweb2
 
 docker:
-  registry: "registry.icinga2.mate.solutions:5000"
+  registry: "registry.icinga.mate.solutions:5000"
 
-virtual_ipaddress: 192.168.90.10
+db_cluster_nodes_ips: "{{ groups['backend'] | map('extract', hostvars, ['ansible_default_ipv4','address']) | join(',') }}"
+virtual_ipaddress: 192.168.92.10
 interface_for_vip: ens3
 
 db_root_password: 123
-db_icinga_name: icinga
-db_icinga_user: icinga
+db_icinga_name: icinga2
+db_icinga_user: icinga2
 db_icinga_password: icinga123
 
 icinga_ticketsalt: c0721e57b3694d09de16181e725d0375

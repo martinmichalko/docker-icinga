@@ -5,19 +5,19 @@ ansible_connection=ssh
 ansible_ssh_user=root
 
 [source]
-source.icinga2.mate.solutions ansible_host=192.168.90.5
+source.icinga.mate.solutions ansible_host=192.168.92.5
 
 [backend]
-db1.icinga2.mate.solutions ansible_host=192.168.90.11
-db2.icinga2.mate.solutions ansible_host=192.168.90.12
-db3.icinga2.mate.solutions ansible_host=192.168.90.13
+db1.icinga.mate.solutions ansible_host=192.168.92.11
+db2.icinga.mate.solutions ansible_host=192.168.92.12
+db3.icinga.mate.solutions ansible_host=192.168.92.13
 
 [frontend]
-web1.icinga2.mate.solutions ansible_host=192.168.90.14
-web2.icinga2.mate.solutions ansible_host=192.168.90.15
+web1.icinga.mate.solutions ansible_host=192.168.92.14
+web2.icinga.mate.solutions ansible_host=192.168.92.15
 
 [registry]
-registry.icinga2.mate.solutions ansible_host=192.168.90.16
+registry.icinga.mate.solutions ansible_host=192.168.92.16
 
 [nodes:children]
 backend

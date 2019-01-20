@@ -3,7 +3,7 @@ install_location: "http://ftp.sk.debian.org/debian/dists/stable/main/installer-a
 volume_pool: virt
 volumes_location: "/data/virt"
 
-project: icinga2
+project: icinga
 dns_resolver: 192.168.1.1
 
 #vm_os_type: centos-7.3
@@ -23,14 +23,9 @@ os_root_password: 123
 #network definition
 networks:
   mgmt:
-    gateway: 192.168.90.1
-    dhcp_start: 192.168.90.150
-    dhcp_end: 192.168.90.224
-    netmask: 255.255.255.0
-  prod:
-    gateway: 192.168.91.1
-    dhcp_start: 192.168.91.150
-    dhcp_end: 192.168.91.224
+    gateway: 192.168.92.1
+    dhcp_start: 192.168.92.150
+    dhcp_end: 192.168.92.224
     netmask: 255.255.255.0
 
 first_ip_address: 11
