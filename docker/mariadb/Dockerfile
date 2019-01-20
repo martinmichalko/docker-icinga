@@ -12,7 +12,8 @@ COPY configs/apt-conf-d-00proxy /etc/apt/apt.conf.d/00proxy
 RUN apt-get update && apt-get -y upgrade
 RUN apt-get -y install gnupg2 software-properties-common dirmngr
 
-RUN apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xF1656F24C74CD1D8
+ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn
+RUN apt-key adv --no-tty --recv-keys --keyserver keyserver.ubuntu.com 0xF1656F24C74CD1D8
 COPY configs/sources.mariadb.list /etc/apt/sources.list.d/sources.mariadb.list
 RUN apt-get update
 # packages installation
