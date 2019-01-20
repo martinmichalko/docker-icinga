@@ -1,0 +1,41 @@
+---
+# copy the config files
+- name: prepare directories list for config templates
+  local_action: shell find {{playbook_dir}}/templates/mariadb-cnf-files/ -mindepth 1 -type d
+  register: directories_to_copy
+  run_once: true
+
+- name: prepare files list for config templates
+  local_action: shell find {{playbook_dir}}/templates/mariadb-cnf-files/ -type f
+  register: files_to_copy
+  run_once: true
+
+- name: identify the not needed directory path part
+  local_action: set_fact
+    part_to_remove="{{playbook_dir}}/templates/mariadb-cnf-files/"
+  run_once: true
+
+- name: identify the not needed directory path part length
+  local_action: set_fact
+    part_to_remove_length="{{part_to_remove|length}}"
+  run_once: true
+
+- name: create needed additional directories on remote machines
+  local_action: file
+    path="{{playbook_dir}}/docker/mariadb/configs/{{item[part_to_remove_length|int:]}}"
+    owner=martin
+    group=martin
+    mode=0750
+    state=directory
+  with_items: "{{directories_to_copy.stdout_lines}}"
+  run_once: true
+
+- name: create from template additional files to remote machines
+  local_action: template
+    src="mariadb-cnf-files/{{item[part_to_remove_length|int:]}}"
+    dest="{{playbook_dir}}/docker/mariadb/configs/{{item[part_to_remove_length|int:-3]}}"
+    owner=martin
+    group=martin
+    mode=0640
+  with_items: "{{files_to_copy.stdout_lines}}"
+  run_once: true

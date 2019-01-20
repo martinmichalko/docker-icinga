@@ -16,10 +16,43 @@
     group: 2006
     mode: 0755
 
-- name: copy the config files
-  copy:
-    src: "{{ playbook_dir }}/docker/mariadb/configs/mariadb-cnf-files/"
-    dest: /dir-config/mariadb
+# copy the config files
+- name: prepare directories list for config templates
+  local_action: shell find {{playbook_dir}}/templates/mariadb-cnf-files/mariadb-cnf-files/ -mindepth 1 -type d
+  register: directories_to_copy
+
+- name: prepare files list for config templates
+  local_action: shell find {{playbook_dir}}/templates/mariadb-cnf-files/mariadb-cnf-files/ -type f
+  register: files_to_copy
+
+- name: identify the not needed directory path part
+  set_fact:
+    part_to_remove: "{{playbook_dir}}/templates/mariadb-cnf-files/mariadb-cnf-files/"
+  run_once: True
+
+- name: identify the not needed directory path part length
+  set_fact:
+    part_to_remove_length: "{{part_to_remove|length}}"
+  run_once: True
+
+- name: create needed additional directories on remote machines
+  file:
+    path: "/dir-config/mariadb/{{item[part_to_remove_length|int:]}}"
+    owner: systemd-resolve
+    group: systemd-network
+    mode: 0750
+    state: directory
+  with_items: "{{directories_to_copy.stdout_lines}}"
+
+- name: create from template additional files to remote machines
+  template:
+    src: "mariadb-cnf-files/mariadb-cnf-files/{{item[part_to_remove_length|int:]}}"
+    dest: "/dir-config/mariadb/{{item[part_to_remove_length|int:-3]}}"
+    owner: systemd-resolve
+    group: systemd-network
+    mode: 0640
+  with_items: "{{files_to_copy.stdout_lines}}"
+# copy the config files -END
 
 - name: Start a mariadb container on first cluster node
   docker_container:

@@ -1,0 +1,9 @@
+---
+- name: delete config directory from docker structure
+  local_action: file
+    path="{{playbook_dir}}/docker/mariadb/configs"
+    owner=martin
+    group=martin
+    mode=0750
+    state=absent
+  run_once: true
