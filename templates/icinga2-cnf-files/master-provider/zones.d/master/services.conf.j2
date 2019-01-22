@@ -1,0 +1,11 @@
+apply Service "cluster-health" {
+  check_command = "cluster-zone"
+
+  display_name = "cluster-health-" + host.name
+
+  /* This follows the convention that the client zone name is the FQDN which is the same as the host object name. */
+  vars.cluster_zone = host.name
+
+  assign where host.vars.client_endpoint
+}
+

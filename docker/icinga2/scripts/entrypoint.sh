@@ -45,7 +45,7 @@ if [ ! -f "${initfile}" ]; then
     #if directory /run/icinga2 does not exist create it with rights nagios:www-data
 
     chown -R nagios:www-data /run/icinga2;
-
+    chown -R nagios:www-data /var/run/icinga2;
     ### USAGE RULES applied: config files ###
     #first start shoulb be with basic config - no cluster - already provided
     #1. installed config files replaced by those provided by docker file structure already in Dockerfile at the end
@@ -90,8 +90,11 @@ if [ ! -f "${initfile}" ]; then
     fi;
 
     # set the right owner at the end of configuration
+    chown -R nagios:nagios /etc/icinga2
     chown -R nagios:nagios /dir-config
     chown -R nagios:nagios /var/lib/icinga2
+    chown -R nagios:www-data /var/run/icinga2
+
     touch ${initfile};
     echo "first start finished";
 

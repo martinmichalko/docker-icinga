@@ -1,0 +1,7 @@
+object Service "cluster" {
+  check_command = "cluster-zone"
+  check_interval = 5s
+  retry_interval = 1s
+
+  host_name = "{{inventory_hostname}}"
+}

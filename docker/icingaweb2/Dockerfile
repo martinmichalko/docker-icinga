@@ -3,6 +3,9 @@ MAINTAINER Martin Michalko (matemichal@gmail.com)
 
 ###ICINGA WEB2
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
+RUN groupadd --system nagios -g 2010 && useradd -r -g nagios nagios -u 2010
+RUN groupadd --system icingaweb2 -g 2011 && usermod -a -G icingaweb2 www-data
+#www-data already exists in debian
 
 #COMMON
 # add common repositories

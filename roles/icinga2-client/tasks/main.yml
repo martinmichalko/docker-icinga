@@ -1,0 +1,3 @@
+---
+
+- include: t-01-install-icinga2-client.yml

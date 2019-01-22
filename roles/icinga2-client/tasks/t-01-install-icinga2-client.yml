@@ -1,0 +1,24 @@
+---
+
+- name: add icinga2 repo key
+  apt_key:
+    url: https://packages.icinga.com/icinga.key
+  register: cmd_result
+  retries: 5
+  until: cmd_result is success
+  environment: "{{ proxy_env }}"
+
+- name: install icinga2 package
+  apt:
+    name: icinga2
+    state: present
+
+
+
+- name: activate icinga2 client
+  shell: >
+        icinga2 node setup --cn "{{inventory_hostname}}"
+            --zone "{{inventory_hostname}}" --ticket ${PKI_TICKET}
+            --endpoint web1.icinga2.mate.solutions
+            --endpoint web2.icinga2.mate.solutions
+            --accept-commands --accept-config

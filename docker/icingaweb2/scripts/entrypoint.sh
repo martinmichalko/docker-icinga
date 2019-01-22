@@ -75,9 +75,9 @@ if [ ! -f "${initfile}" ]; then
     #Generate Apache/nginx config. This command will print an apache config for you on stdout > and place it:
     icingacli setup config webserver apache > /etc/apache2/sites-enabled/icingaweb2.conf
 
-    #Add www-data user to icingaweb2 group if not done already
-    addgroup --system icingaweb2
-    usermod -a -G icingaweb2 www-data
+    #Add www-data user to icingaweb2 group if not done already performed at the beginning
+    #addgroup --system icingaweb2
+    #usermod -a -G icingaweb2 www-data
 
     #Create the Icinga Web 2 configuration in /etc/icingaweb2.
     # The directory can be easily created with:
@@ -154,6 +154,7 @@ if [ ! -f "${initfile}" ]; then
         ln -s ${EXTERNAL_DIR_CONFIG_APACHE}/apache2.conf ${DIR_CONFIG_APACHE}/apache2.conf;
     fi;
 
+    chown -R nagios:www-data /var/run/icinga2
     touch ${initfile};
     echo "first start finished";
 fi;

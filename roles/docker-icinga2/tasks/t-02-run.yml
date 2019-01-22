@@ -41,12 +41,13 @@
   template:
     src: "icinga2-cnf-files/master-provider/{{item}}"
     dest: "/dir-config/icinga2/{{item[:-3]}}"
-    owner: systemd-resolve
-    group: systemd-network
+    owner: 2010
+    group: 2010
     mode: 0640
   with_items: "{{files_to_copy.stdout_lines}}"
   when: inventory_hostname_short[-1:] == '1'
 
+#3. SECOND start of icinga container
 - name: copying to provider finished - restart icinga2 provider needed to accept the config changes
   docker_container:
     name: "icinga2-{{inventory_hostname_short}}"
@@ -72,8 +73,8 @@
   copy:
     src: "{{playbook_dir}}/roles/docker-icinga2/files/{{inventory_hostname_short[:-1]}}1.{{domain}}/dir-config/icinga2-ca/"
     dest: "/dir-config/icinga2-ca/"
-    owner: systemd-resolve
-    group: systemd-network
+    owner: 2010
+    group: 2010
   when: inventory_hostname_short[-1:] != '1'
 
 #- name:  copying the ca.cert from /var/lib/icinga2/ca directory to receivers certs /var/lib/icinga2/certs/ca.crt
@@ -84,7 +85,13 @@
 #    group: systemd-network
 #  when: inventory_hostname_short[-1:] != '1'
 
-- name: Wait 120 seconds for port 5665 to become open on the provider
+- name: file /dir-config/icinga2/conf.d/hosts.conf has to be absent on all masters
+  file:
+    path: "/dir-config/icinga2/conf.d/hosts.conf"
+    state: absent
+  when: inventory_hostname_short[-1:] == '1'
+
+- name: Wait 120 seconds for port 5665 to become open on the provider "{{inventory_hostname_short}}"
   wait_for:
     port: 5665
     timeout: 120
@@ -133,13 +140,20 @@
   template:
     src: "icinga2-cnf-files/master-receivers/{{item}}"
     dest: "/dir-config/icinga2/{{item[:-3]}}"
-    owner: systemd-resolve
-    group: systemd-network
+    owner: 2010
+    group: 2010
     mode: 0640
   with_items: "{{files_to_copy.stdout_lines}}"
   when: inventory_hostname_short[-1:] != '1'
 
-- name: restart the icinga2 one after by one at the end of configuration
+- name: file /dir-config/icinga2/conf.d/hosts.conf has to be absent on all masters
+  file:
+    path: "/dir-config/icinga2/conf.d/hosts.conf"
+    state: absent
+  when: inventory_hostname_short[-1:] != '1'
+
+#4. THIRD start on provider and SECOND start on receivers
+- name: restart the icinga2 container at the end of configuration on all masters
   docker_container:
     name: "icinga2-{{inventory_hostname_short}}"
     restart: yes

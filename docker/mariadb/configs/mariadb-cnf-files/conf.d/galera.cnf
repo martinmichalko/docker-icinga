@@ -1,0 +1,16 @@
+[mysqld]
+#mysql settings
+binlog_format=ROW
+default-storage-engine=innodb
+innodb_autoinc_lock_mode=2
+innodb_doublewrite=1
+query_cache_size=0
+query_cache_type=0
+bind-address=0.0.0.0
+
+#galera settings
+wsrep_on=ON
+wsrep_provider=/usr/lib/galera/libgalera_smm.so
+wsrep_cluster_name="test_cluster"
+wsrep_cluster_address=gcomm://192.168.92.11,192.168.92.12,192.168.92.13
+wsrep_sst_method=rsync
